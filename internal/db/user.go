@@ -16,3 +16,17 @@ func CreateUser(user *models.User) error {
 	}
 	return nil
 }
+
+func GetUserByEmail(email string) (*models.User, error) {
+	user := &models.User{}
+	const sqlQuery = `
+		SELECT id, name, email, password
+		FROM USER
+		WHERE email = $1
+	`
+	err := db.QueryRow(sqlQuery, email).Scan(&user.ID, &user.Name, &user.Email, &user.Password)
+	if err != nil {
+		return nil, errors.Wrap(err, "Fetching user by email")
+	}
+	return user, nil
+}
