@@ -19,7 +19,7 @@ func RegisterUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password))
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 	if err != nil {
 		http.Error(w, "Failed to hash password", http.StatusInternalServerError)
 		return
