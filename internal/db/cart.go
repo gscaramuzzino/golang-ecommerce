@@ -37,3 +37,37 @@ func GetUserCart(userID int) (*models.Cart, error) {
 
 	return cart, nil
 }
+
+func CreateOrder(userID int, products []models.Product) (int, error) {
+	tx, err := db.Begin()
+	if err != nil {
+		return 0, err
+	}
+
+	var orderID int
+	err = tx.QueryRow("INSERT INTO orders (user_id) VALUES ($1) RETURNING id", userID).Scan(&orderID)
+	if err != nil {
+		tx.Rollback()
+		return 0, err
+	}
+
+	for _, product := range products {
+		_, err = tx.Exec("INSERT INTO order_products (order_id, product_id) VALUES ($1, $2)", orderID, product.ID)
+		if err != nil {
+			tx.Rollback()
+			return 0, err
+		}
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		return 0, err
+	}
+
+	return orderID, nil
+}
+
+func EmptyCart(userID int) error {
+	_, err := db.Exec("DELETE FROM carts WHERE user_id = $1", userID)
+	return err
+}
