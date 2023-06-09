@@ -2,7 +2,9 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
@@ -73,4 +75,23 @@ func generateJWT(user models.User) (string, error) {
 	}
 
 	return tokenString, nil
+}
+
+func getUserIDFromToken(r *http.Request) (int, error) {
+	authHeader := r.Header.Get("Authorization")
+	tokenString := strings.Split(authHeader, " ")[1]
+
+	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
+		}
+		return []byte("secret"), nil
+	})
+
+	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
+		userID := int(claims["user_id"].(float64))
+		return userID, nil
+	} else {
+		return 0, err
+	}
 }

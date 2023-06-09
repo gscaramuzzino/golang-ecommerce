@@ -17,8 +17,8 @@ func RegisterRoutes() *mux.Router {
 	r.HandleFunc("/products/{productID}", handlers.GetProductDetails).Methods("GET")
 
 	// Cart routes
-	r.HandleFunc("/users/{userID}/cart", handlers.AddToCart).Methods("POST")
-	r.HandleFunc("/users/{userID}/cart", handlers.GetCart).Methods("GET")
+	r.HandleFunc("/cart", handlers.GetCart).Methods("GET")
+	r.HandleFunc("/cart/{productID}", handlers.AddToCart).Methods("POST")
 
 	// Product routes
 	r.HandleFunc("/users/{userID}/checkout", handlers.Checkout).Methods("POST")
