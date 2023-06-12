@@ -2,10 +2,24 @@ version: '3.2'
 
 services:
   db:
-    build: ./db
+    build: postgres:13-alpine
     ports:
       - 5432:5432
     environment:
       - POSTGRES_USER=user
       - POSTGRES_PASSWORD=password
       - POSTGRES_DB=ecommerce
+    volumes:
+      - ./db:/docker-entrypoint-initdb.d
+  ecommerce:
+    build: .
+    ports:
+      - 8080:8080
+    environment:
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_USER=user
+      - DB_PASSWORD=password
+      - DB_NAME=ecommerce
+    depends_on:
+      - db

@@ -20,7 +20,7 @@ func RegisterRoutes() *mux.Router {
 
 	// Cart routes
 	r.HandleFunc("/cart", handlers.ViewCart).Methods("GET")
-	r.HandleFunc("/cart/{productID}", handlers.AddToCart).Methods("POST")
+	r.HandleFunc("/cart/add/{productID}", handlers.AddToCart).Methods("POST")
 
 	// Product routes
 	r.HandleFunc("/cart/checkout", handlers.Checkout).Methods("POST")
