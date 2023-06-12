@@ -1,6 +1,8 @@
 package routes
 
 import (
+	"net/http"
+
 	"github.com/gorilla/mux"
 	"github.com/gscaramuzzino/go-ecommerce/internal/handlers"
 )
@@ -22,6 +24,10 @@ func RegisterRoutes() *mux.Router {
 
 	// Product routes
 	r.HandleFunc("/cart/checkout", handlers.Checkout).Methods("POST")
+
+	r.HandleFunc("/swagger-ui/", func(w http.ResponseWriter, r *http.Request) {
+		http.FileServer(http.Dir("./dist"))
+	}).Methods("GET")
 
 	return r
 }

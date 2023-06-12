@@ -49,14 +49,22 @@ func LoginUser(w http.ResponseWriter, r *http.Request) {
 	storedUser, err := db.GetUserByEmail(user.Email)
 	if err != nil {
 		http.Error(w, "User not found", http.StatusNotFound)
+		return
 	}
 
 	err = bcrypt.CompareHashAndPassword([]byte(storedUser.Password), []byte(user.Password))
 	if err != nil {
 		http.Error(w, "Incorrect password", http.StatusUnauthorized)
+		return
 	}
 
-	w.Write([]byte("User logged in"))
+	token, err := generateJWT(*storedUser)
+	if err != nil {
+		http.Error(w, "Failed to generate token", http.StatusInternalServerError)
+		return
+	}
+
+	w.Write([]byte(token))
 }
 
 func generateJWT(user models.User) (string, error) {
