@@ -5,22 +5,29 @@ export let options = {
    scenarios: {
       user_tests: {
          executor: 'constant-vus',
-         vus: 100,
-         duration: '3m', // user registration and login test will run for 1 minute
-         exec: 'userScenario' // the function to be executed for this scenario
+         vus: 20,
+         duration: '5m',
+         exec: 'userScenario'
       },
       store_tests: {
          executor: 'constant-vus',
-         vus: 40,
-         startTime: '3m', // product test will start after 1 minute
-         duration: '25m',  // product test will run for 1 minute
-         exec: 'storeScenario' // the function to be executed for this scenario
+         vus: 100,
+         startTime: '5m',
+         duration: '10m',
+         exec: 'storeScenario'
       },
    },
 };
 
 export function setup() {
-   let user = { "name": "bwGZrLeX8v", "email": "bwGZrLeX8v@outlook.com", "password": "mypassword" };
+   const user = {
+      "name": "k6user",
+      "email": "k6user@email.com",
+      "password": "k6user"
+   };
+   http.post('http://localhost:8080/users', JSON.stringify(user), {
+      headers: { 'Content-Type': 'application/json' },
+   });
    let res = http.post('http://localhost:8080/users/login', JSON.stringify(user));
    if (res.status !== 200) throw new Error('Auth failed');
    let authToken = res.body;
@@ -35,6 +42,7 @@ export function userScenario() {
          "email": randomName + "@email.com",
          "password": randomName
       };
+
       let resRegister = http.post('http://localhost:8080/users', JSON.stringify(user), {
          headers: { 'Content-Type': 'application/json' },
       });
@@ -52,7 +60,7 @@ export function userScenario() {
 }
 
 export function storeScenario(authToken) {
-   
+
    group('products', function () {
       let resListProducts = http.get('http://localhost:8080/products');
 
@@ -90,7 +98,7 @@ export function storeScenario(authToken) {
 
       let checkoutRes = http.post('http://localhost:8080/cart/checkout', {}, { headers: headers });
       check(checkoutRes, {
-          'checkout status was 200': (r) => r.status === 200,
+         'checkout status was 200': (r) => r.status === 200,
       });
    });
 

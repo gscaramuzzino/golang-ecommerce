@@ -12,6 +12,7 @@ services:
     volumes:
       - ./db:/docker-entrypoint-initdb.d
   ecommerce:
+    container_name: golang-ecommerce
     build: .
     ports:
       - 8080:8080

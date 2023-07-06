@@ -1,6 +1,11 @@
 package db
 
-import "github.com/gscaramuzzino/go-ecommerce/internal/models"
+import (
+	"math/rand"
+	"time"
+
+	"github.com/gscaramuzzino/go-ecommerce/internal/models"
+)
 
 func CreateProduct(product *models.Product) error {
 	const sqlQuery = `
@@ -35,7 +40,22 @@ func GetAllProducts() ([]*models.Product, error) {
 		return nil, err
 	}
 
+	if shouldSimulateDelay() {
+		rand.Seed(time.Now().UnixNano())
+		time.Sleep(time.Second * 6) // Adjust the duration as per your requirement
+	}
+
 	return products, nil
+
+}
+
+func shouldSimulateDelay() bool {
+	// Simulate the condition for when the delay should be introduced
+
+	// Generate a random number between 0 and 9
+	rand.Seed(time.Now().UnixNano())
+	randomNumber := rand.Intn(100)
+	return randomNumber <= 3 || randomNumber >= 97
 }
 
 func GetProductByID(id int) (*models.Product, error) {
