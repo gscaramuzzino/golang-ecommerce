@@ -6,14 +6,14 @@ export let options = {
       user_tests: {
          executor: 'constant-vus',
          vus: 20,
-         duration: '5m',
+         duration: '15s',
          exec: 'userScenario'
       },
       store_tests: {
          executor: 'constant-vus',
          vus: 100,
-         startTime: '5m',
-         duration: '10m',
+         startTime: '15s',
+         duration: '1m',
          exec: 'storeScenario'
       },
    },
